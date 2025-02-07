@@ -12,7 +12,7 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::prefix('messages')->name('messages.')->group(function() {
+Route::prefix('message')->name('message.')->group(function() {
     Route::get('/', [MessageController::class, 'index'])->name('index');
     Route::post('/', [MessageController::class, 'store'])->name('store');
     Route::get('/show', [MessageController::class, 'show'])->name('show');

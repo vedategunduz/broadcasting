@@ -9,10 +9,11 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <div id="messageContainer" class="flex flex-col gap-2"></div>
+                    <livewire:message-component channel_id = "1" />
+
+
 
                     <form action="" method="POST" id="message-form">
-                        <x-text-input type="hidden" name="sender_id" value="{{ Auth::user()->id }}" />
                         <x-text-input type="hidden" name="channel_id" value="1" />
 
                         <div class="mb-4">
@@ -34,30 +35,33 @@
         const messageContainer = document.querySelector('#messageContainer');
 
         document.addEventListener('DOMContentLoaded', async () => {
-            const RESPONSE = await ApiService.fetchData("{{ route('messages.show') }}", {}, 'GET');
-
-            if (RESPONSE.status === 200) {
-                messageContainer.innerHTML = RESPONSE.data.html;
-            } else {
-                alert('Mesajlar yüklenirken bir hata oluştu.');
-            }
+            window.Echo.private(`message-channel.1`)
+                .listen('MessageCreated', (event) => {
+                    console.log('Yeni mesaj:', event.message);
+                });
         });
 
         submitButton.addEventListener('click', async (e) => {
             e.preventDefault();
 
-            const formData = new FormData(form);
+            e.target.disabled = true;
+            e.target.textContent = 'Gönderiliyor...';
 
-            const RESPONSE = await ApiService.fetchData("{{ route('messages.store') }}", formData, 'POST');
+            try {
+                const formData = new FormData(form);
 
-            if (RESPONSE.status === 200) {
-                messageContainer.innerHTML = `
-                    <div class="bg-gray-200 p-2 rounded-lg">
-                        ${RESPONSE.data.html}
-                    </div>
-                `;
-            } else {
-                alert('Mesaj gönderilirken bir hata oluştu.');
+                const RESPONSE = await ApiService.fetchData("{{ route('message.store') }}", formData, 'POST');
+
+                if (RESPONSE.status === 201) {
+                    form.reset();
+                } else {
+                    alert('Mesaj gönderilirken bir hata oluştu.');
+                }
+            } catch (error) {
+
+            } finally {
+                e.target.disabled = false;
+                e.target.textContent = 'Gönder';
             }
         })
     </script>

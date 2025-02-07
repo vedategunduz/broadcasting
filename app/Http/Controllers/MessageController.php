@@ -2,42 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MessageCreated;
 use App\Models\Message;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MessageController extends Controller
 {
     public function index()
     {
-        return view('messages');
-    }
-
-    public function show()
-    {
-        $messages = Message::all();
-
-        $html = view('message-body', [
-            'messages' => $messages
-        ])->render();
-
-        return response()->json([
-            'html' => $html
-        ]);
+        return view('message.index');
     }
 
     public function store(Request $request)
     {
+        $validated = $request->all();
 
-        Message::create($request->all());
+        $message = User::find(Auth::id())->messages()->create($validated);
 
-        $messages = Message::all();
-
-        $html = view('message-body', [
-            'messages' => $messages
-        ])->render();
+        broadcast(new MessageCreated($message))->toOthers();
 
         return response()->json([
-            'html' => $html
-        ]);
+            'success' => true,
+            'message_id' => $message->id,
+        ], 201);
     }
 }

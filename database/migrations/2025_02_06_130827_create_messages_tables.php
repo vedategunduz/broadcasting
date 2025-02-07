@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('sender_id')->constrained('users')->onDeleteCascade();
             $table->foreignId('channel_id')->constrained('message_channels')->onDeleteCascade();
-            $table->string('content');
+            $table->longText('content');
             $table->enum('status', ['edited', 'deleted', 'saved'])->default('saved');
             $table->timestamps();
         });
