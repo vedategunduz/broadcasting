@@ -9,9 +9,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <livewire:message-component channel_id = "1" />
-
-
+                    <livewire:message-component channel-id="1" />
 
                     <form action="" method="POST" id="message-form">
                         <x-text-input type="hidden" name="channel_id" value="1" />
@@ -35,9 +33,10 @@
         const messageContainer = document.querySelector('#messageContainer');
 
         document.addEventListener('DOMContentLoaded', async () => {
+
             window.Echo.private(`message-channel.1`)
                 .listen('MessageCreated', (event) => {
-                    console.log('Yeni mesaj:', event.message);
+
                 });
         });
 

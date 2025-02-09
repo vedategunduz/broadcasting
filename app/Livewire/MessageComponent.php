@@ -13,10 +13,16 @@ class MessageComponent extends Component
     public $messageCount = 5;
     public $channelId;
 
-    #[On('echo-private:message-channel.{channel_id},MessageCreated')]
     public function mount($channelId)
     {
-        $this->messages = Message::where('channel_id', 1)->latest()->take($this->messageCount)->get();
+        $this->channelId = $channelId;
+
+        $this->messages = Message::where('channel_id', $channelId)
+            ->latest()
+            ->take($this->messageCount)
+            ->get()->toArray();
+
+        // dd($this->messages);
     }
 
     public function incrementMessageCount()
@@ -26,10 +32,15 @@ class MessageComponent extends Component
         $this->mount($this->channelId);
     }
 
+    #[On('echo-private:message-channel.{channelId},MessageCreated')]
     public function messageCreated($message)
     {
-        $this->messages->prepend($message);
+        $newMessage = $message['message'];
+
+        array_push($this->messages, $newMessage);
+        // $this->messages->prepend($newMessage);
     }
+
 
     public function render()
     {

@@ -2,22 +2,22 @@
     @foreach ($messages as $message)
         <div @class([
             'flex',
-            'flex-row-reverse' => $message->sender->id === auth()->id(),
+            'flex-row-reverse' => $message['sender_id'] === auth()->id(),
         ])>
             <div @class([
                 'p-4 rounded',
-                'bg-emerald-50' => $message->sender->id === auth()->id(),
-                'bg-blue-50' => $message->sender->id !== auth()->id(),
+                'bg-emerald-50' => $message['sender_id'] === auth()->id(),
+                'bg-blue-50' => $message['sender_id'] !== auth()->id(),
             ])>
                 <div @class([
                     'text-gray-900 font-semibold',
-                    'text-right' => $message->sender->id === auth()->id(),
+                    'text-right' => $message['sender_id'] === auth()->id(),
                 ])>
-                    <small>{{ $message->sender->name }}</small>
+                    {{-- <small>{{ $message->sender->name }}</small> --}}
                 </div>
-                <div>{{ $message->content }}</div>
+                <div>{{ $message['content'] }}</div>
                 <div class="text-right">
-                    <small>{{ $message->created_at }}</small>
+                    <small>{{ $message['created_at'] }}</small>
                 </div>
             </div>
         </div>

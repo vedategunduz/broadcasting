@@ -20,7 +20,7 @@ class MessageCreated implements ShouldBroadcast
      */
     public function __construct(Message $message)
     {
-        $this->message = $message;
+        $this->message = $message->toArray();
     }
 
     /**
@@ -30,6 +30,6 @@ class MessageCreated implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel("message-channel.1");
+        return new PrivateChannel("message-channel.{$this->message['channel_id']}");
     }
 }
